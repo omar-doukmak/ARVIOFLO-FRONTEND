@@ -297,13 +297,19 @@
     chatInput.style.height = 'auto';
     addUserMessage(text);
     showTyping();
-    fetch('https://web-production-b77ce.up.railway.app/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': '4f1813e8c84e073b9513e651439ecc90534a340cfa22c880d9caa8402cc176d8' },
-      body: JSON.stringify({ message: text })
-    })
-    .then(r => r.json())
-    .then(data => { removeTyping(); addBotMessage(data.reply); });
+    const timeout = setTimeout(() => {
+  const t = document.getElementById('typing');
+  if (t) t.querySelector('.msg-bubble').textContent = 'This is taking longer than usual...';
+}, 5000);
+
+fetch('https://web-production-b77ce.up.railway.app/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'x-api-key': '4f1813e8c84e073b9513e651439ecc90534a340cfa22c880d9caa8402cc176d8' },
+  body: JSON.stringify({ message: text })
+})
+.then(r => r.json())
+.then(data => { clearTimeout(timeout); removeTyping(); addBotMessage(data.reply); })
+.catch(() => { clearTimeout(timeout); removeTyping(); addBotMessage("Sorry, I'm having trouble connecting right now. Please try again."); });
   }
 
   const chatInput = document.getElementById('chat-input');
