@@ -299,7 +299,7 @@
     const timeout = setTimeout(() => {
   const t = document.getElementById('typing');
   if (t) t.querySelector('.msg-bubble').textContent = 'This is taking longer than usual...';
-}, 7500);
+}, 10000);
 
 fetch('https://web-production-b77ce.up.railway.app/chat', {
   method: 'POST',
