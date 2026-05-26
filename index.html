@@ -261,7 +261,7 @@
     const c = document.getElementById('chat-messages');
     const m = document.createElement('div');
     m.className = 'msg bot';
-    m.innerHTML = <div class="msg-av">A</div><div class="msg-bubble">${text}</div>;
+    m.innerHTML = `<div class="msg-av">A</div><div class="msg-bubble">${text}</div>`;
     c.appendChild(m);
     c.scrollTop = c.scrollHeight;
   }
@@ -269,8 +269,7 @@
   function addUserMessage(text) {
     const c = document.getElementById('chat-messages');
     const m = document.createElement('div');
-    m.className = 'msg user';
-    m.innerHTML = <div class="msg-av">U</div><div class="msg-bubble">${escapeHTML(text)}</div>;
+    m.innerHTML = `<div class="msg-av">U</div><div class="msg-bubble">${escapeHTML(text)}</div>`;
     c.appendChild(m);
     c.scrollTop = c.scrollHeight;
   }
@@ -278,8 +277,7 @@
   function showTyping() {
     const c = document.getElementById('chat-messages');
     const t = document.createElement('div');
-    t.className = 'msg bot'; t.id = 'typing';
-    t.innerHTML = <div class="msg-av">A</div><div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>;
+    t.innerHTML = `<div class="msg-av">A</div><div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
     c.appendChild(t);
     c.scrollTop = c.scrollHeight;
   }
