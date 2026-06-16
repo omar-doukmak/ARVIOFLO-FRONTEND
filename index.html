@@ -103,7 +103,7 @@
     .input-row:focus-within{border-color:rgba(201,76,76,0.38)}
     #chat-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;resize:none;max-height:120px;line-height:1.55}
     #chat-input::placeholder{color:var(--text-dimmer)}
-    .send-btn{width:36px;height:36px;background:var(--red);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0}
+    .send-btn{width:36px;height:36px;background:var(--red);border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0}
     .send-btn:disabled{opacity:0.4;cursor:default;transform:none;box-shadow:none}
     .send-btn:hover{background:var(--red-hover);transform:translateY(-1px)}
     .send-btn:active{transform:translateY(0)}
@@ -232,7 +232,7 @@
     <div class="input-row">
       <textarea id="chat-input" placeholder="How can I help you today?" rows="1"></textarea>
       <button class="send-btn" onclick="sendMessage()">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
       </button>
     </div>
   </div>
