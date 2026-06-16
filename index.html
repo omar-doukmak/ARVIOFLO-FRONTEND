@@ -261,7 +261,7 @@
     const c = document.getElementById('chat-messages');
     const m = document.createElement('div');
     m.className = 'msg bot';
-    m.innerHTML = `<div class="msg-av">A</div><div class="msg-bubble">${text}</div>`;
+    m.innerHTML = `<div class="msg-av">A</div><div class="msg-bubble">${linkify(text)}</div>`;
     c.appendChild(m);
     c.scrollTop = c.scrollHeight;
   }
@@ -315,6 +315,15 @@ fetch('https://web-production-b77ce.up.railway.app/chat', {
   chatInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
   chatInput.addEventListener('input', () => { chatInput.style.height = 'auto'; chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px'; });
 
+  function linkify(text) {
+  const urlPattern = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlPattern, function(url) {
+    return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color:#e87a7a;text-decoration:underline;">' + url + '</a>';
+  });
+}
+
+function escapeHTML(str) {
+  
   function escapeHTML(str) {
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
