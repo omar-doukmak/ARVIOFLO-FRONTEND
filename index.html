@@ -99,6 +99,7 @@
     .slow-note{font-size:12px;color:var(--text-dimmer);font-style:italic;margin-top:6px;animation:fadeUp .3s ease both}
     .chat-input-area{padding:18px 24px;border-top:1px solid var(--border);background:rgba(7,9,28,0.8);backdrop-filter:blur(14px);flex-shrink:0}
     .input-row{display:flex;gap:10px;align-items:flex-end;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;transition:border-color .2s}
+    .input-row:hover{border-color:var(--border-hi)}
     .input-row:focus-within{border-color:rgba(201,76,76,0.38)}
     #chat-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;resize:none;max-height:120px;line-height:1.55}
     #chat-input::placeholder{color:var(--text-dimmer)}
@@ -229,7 +230,7 @@
   <div class="chat-messages" id="chat-messages"></div>
   <div class="chat-input-area">
     <div class="input-row">
-      <textarea id="chat-input" placeholder="Ask Arvio anything..." rows="1"></textarea>
+      <textarea id="chat-input" placeholder="How can I help you today?" rows="1"></textarea>
       <button class="send-btn" onclick="sendMessage()">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
