@@ -96,6 +96,7 @@
     .typing-dot{width:7px;height:7px;background:var(--text-dimmer);border-radius:50%;animation:typingBounce 1.2s ease infinite}
     .typing-dot:nth-child(2){animation-delay:.2s}
     .typing-dot:nth-child(3){animation-delay:.4s}
+    .slow-note{font-size:12px;color:var(--text-dimmer);font-style:italic;margin-top:6px;animation:fadeUp .3s ease both}
     .chat-input-area{padding:18px 24px;border-top:1px solid var(--border);background:rgba(7,9,28,0.8);backdrop-filter:blur(14px);flex-shrink:0}
     .input-row{display:flex;gap:10px;align-items:flex-end;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;transition:border-color .2s}
     .input-row:focus-within{border-color:rgba(201,76,76,0.38)}
@@ -269,6 +270,7 @@
   function addUserMessage(text) {
     const c = document.getElementById('chat-messages');
     const m = document.createElement('div');
+    m.className = 'msg user';
     m.innerHTML = `<div class="msg-av">U</div><div class="msg-bubble">${escapeHTML(text)}</div>`;
     c.appendChild(m);
     c.scrollTop = c.scrollHeight;
@@ -278,7 +280,8 @@
     const c = document.getElementById('chat-messages');
     const t = document.createElement('div');
     t.id = 'typing';
-    t.innerHTML = `<div class="msg-av">A</div><div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+    t.className = 'msg bot';
+    t.innerHTML = `<div class="msg-av">A</div><div class="msg-bubble"><div class="typing-dots">
     c.appendChild(t);
     c.scrollTop = c.scrollHeight;
   }
@@ -295,10 +298,16 @@
     chatInput.value = '';
     chatInput.style.height = 'auto';
     addUserMessage(text);
+    document.querySelector('.send-btn').disabled = true;
     showTyping();
     const timeout = setTimeout(() => {
   const t = document.getElementById('typing');
-  if (t) t.querySelector('.msg-bubble').textContent = 'This is taking longer than usual...';
+  if (t && !t.querySelector('.slow-note')) {
+    const note = document.createElement('div');
+    note.className = 'slow-note';
+    note.textContent = 'Still thinking...';
+    t.querySelector('.msg-bubble').appendChild(note);
+  }
 }, 10000);
 
 fetch('https://web-production-b77ce.up.railway.app/chat', {
@@ -307,8 +316,8 @@ fetch('https://web-production-b77ce.up.railway.app/chat', {
   body: JSON.stringify({ message: text })
 })
 .then(r => r.json())
-.then(data => { clearTimeout(timeout); removeTyping(); addBotMessage(data.reply); })
-.catch(() => { clearTimeout(timeout); removeTyping(); addBotMessage("Sorry, I'm having trouble connecting right now. Please try again."); });
+.then(data => { clearTimeout(timeout); removeTyping(); addBotMessage(data.reply); document.querySelector('.send-btn').disabled = false; })
+.catch(() => { clearTimeout(timeout); removeTyping(); addBotMessage("Sorry, I'm having trouble connecting right now. Please try again."); document.querySelector('.send-btn').disabled = false; });
   }
 
   const chatInput = document.getElementById('chat-input');
