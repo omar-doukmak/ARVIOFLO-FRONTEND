@@ -240,6 +240,7 @@
 
 <script>
   let chatReady = false;
+  const sessionId = crypto.randomUUID();
 
   function showChat() {
     document.getElementById('landing-page').classList.remove('active');
@@ -260,11 +261,12 @@
     setTimeout(() => addBotMessage("Hi! I'm Arvio, your AI front desk. How can I help you today?"), 300);
   }
 
-  function addBotMessage(text) {
+  function addBotMessage(text, imageUrl) {
     const c = document.getElementById('chat-messages');
     const m = document.createElement('div');
     m.className = 'msg bot';
-    m.innerHTML = `<div class="msg-av">A</div><div class="msg-bubble">${linkify(text)}</div>`;
+    const imgTag = imageUrl ? `<img src="${imageUrl}" style="max-width:100%;border-radius:8px;margin-top:8px;" />` : '';
+    m.innerHTML = `<div class="msg-bubble">${linkify(text)}${imgTag}</div>`;
     c.appendChild(m);
     c.scrollTop = c.scrollHeight;
   }
@@ -315,10 +317,10 @@
 fetch('https://web-production-b77ce.up.railway.app/chat', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json', 'x-api-key': '4f1813e8c84e073b9513e651439ecc90534a340cfa22c880d9caa8402cc176d8' },
-  body: JSON.stringify({ message: text })
+  body: JSON.stringify({ message: text, session_id: sessionId })
 })
 .then(r => r.json())
-.then(data => { clearTimeout(timeout); removeTyping(); addBotMessage(data.reply); document.querySelector('.send-btn').disabled = false; })
+.then(data => { clearTimeout(timeout); removeTyping(); addBotMessage(data.reply, data.image_url); document.querySelector('.send-btn').disabled = false; })
 .catch(() => { clearTimeout(timeout); removeTyping(); addBotMessage("Sorry, I'm having trouble connecting right now. Please try again."); document.querySelector('.send-btn').disabled = false; });
   }
 
