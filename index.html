@@ -329,6 +329,7 @@ fetch('https://web-production-b77ce.up.railway.app/chat', {
   chatInput.addEventListener('input', () => { chatInput.style.height = 'auto'; chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px'; });
 
   function linkify(text) {
+  text = text.replace(/Image:\s*/gi, '');
   const urlPattern = /(https?:\/\/[^\s]+)/g;
   return text.replace(urlPattern, function(url) {
     if (url.match(/\.(png|jpg|jpeg|gif|webp)$/i)) {
