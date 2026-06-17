@@ -95,7 +95,7 @@
     footer p{font-size:13px;color:var(--text-dimmer)}
 
     /* Chat page */
-    #chat-page{height:100vh;flex-direction:column}
+    #chat-page{height:100dvh;flex-direction:column}
     .chat-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;background:rgba(10,10,12,0.88);backdrop-filter:blur(14px);flex-shrink:0}
     .chat-identity{display:flex;align-items:center;gap:10px}
     .chat-avatar{width:32px;height:32px;background:var(--accent-glow-strong);border:1px solid var(--border-accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent)}
@@ -148,7 +148,7 @@
       .stats-strip{gap:28px;padding:22px 20px;flex-wrap:wrap}
       .cta-banner{padding:80px 20px}
       footer{flex-direction:column;gap:10px;text-align:center;padding:22px 20px}
-      .chat-messages{padding:18px 14px;padding-bottom:80px}
+      .chat-messages{padding:18px 14px;padding-bottom:100px}
       .chat-input-area{padding:12px 14px;position:fixed;bottom:0;left:0;right:0;z-index:100}
     }
   </style>
