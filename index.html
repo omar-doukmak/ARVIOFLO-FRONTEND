@@ -331,6 +331,9 @@ fetch('https://web-production-b77ce.up.railway.app/chat', {
   function linkify(text) {
   const urlPattern = /(https?:\/\/[^\s]+)/g;
   return text.replace(urlPattern, function(url) {
+    if (url.match(/\.(png|jpg|jpeg|gif|webp)$/i)) {
+      return '<img src="' + url + '" style="max-width:100%;border-radius:8px;margin-top:8px;display:block;" />';
+    }
     return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color:#e87a7a;text-decoration:underline;">' + url + '</a>';
   });
 }
