@@ -297,7 +297,7 @@
     chatInput.style.height = 'auto';
     addUserMessage(text);
     showTyping();
-    fetch('http://104.248.199.129:8000/chat', {
+    fetch('https://api.arvioflo.com/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': '4f1813e8c84e073b9513e651439ecc90534a340cfa22c880d9caa8402cc176d8' },
       body: JSON.stringify({ message: text })
