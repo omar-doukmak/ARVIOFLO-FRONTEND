@@ -7,7 +7,7 @@
   <link rel="icon" type="image/jpeg" href="logo.jpg">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
   <style>
-    ,::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    *,::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
       --bg:#07091c;--bg-2:#0c0f28;--surface:#111630;--surface-2:#181d3a;
       --border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.13);--border-red:rgba(201,76,76,0.3);
@@ -23,7 +23,7 @@
     #chat-page.active{display:flex}
     .btn-primary{background:var(--red);color:#fff;border:none;border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:background .18s,transform .12s,box-shadow .18s;position:relative;overflow:hidden}
     .btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,0.09),transparent);pointer-events:none}
-    .btn-primary:hover{background:var(--red-hover);transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,76,76,0.32)}
+    .btn-primary:hover{background:var(--red-hover);transform:translateY(-1px)}
     .btn-primary:active{transform:translateY(0);box-shadow:none}
     .btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;transition:all .18s}
     .btn-ghost:hover{color:var(--text);border-color:var(--border-hi);background:rgba(255,255,255,0.04)}
@@ -104,9 +104,9 @@
     #chat-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;resize:none;max-height:120px;line-height:1.55}
     #chat-input::placeholder{color:var(--text-dimmer)}
     .send-btn{width:36px;height:36px;background:var(--red);border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0}
-    .send-btn:disabled{opacity:0.4;cursor:default;transform:none;box-shadow:none}
-    .send-btn:hover{background:var(--red-hover);transform:translateY(-1px)}
+    .send-btn:hover{opacity:0.8}
     .send-btn:active{transform:translateY(0)}
+    .send-btn:disabled{opacity:0.4;cursor:default;transform:none;box-shadow:none}
     .send-btn svg{width:15px;height:15px;stroke:white}
     @media(max-width:768px){
       nav{padding:16px 20px}
@@ -121,7 +121,7 @@
       .cta-banner{padding:80px 20px}
       footer{flex-direction:column;gap:10px;text-align:center;padding:22px 20px}
       .chat-messages{padding:18px 14px;padding-bottom:100px}
-.chat-input-area{padding:12px 14px;position:fixed;bottom:0;left:0;right:0;z-index:100}
+      .chat-input-area{padding:12px 14px;position:fixed;bottom:0;left:0;right:0;z-index:100}
     }
   </style>
 </head>
@@ -265,7 +265,7 @@
     const m = document.createElement('div');
     m.className = 'msg bot';
     const imgTag = imageUrl ? `<img src="${imageUrl}" style="max-width:100%;border-radius:8px;margin-top:8px;" />` : '';
-    m.innerHTML = `<div class="msg-bubble">${linkify(text)}${imgTag}</div>`;
+    m.innerHTML = `<div class="msg-av">A</div><div class="msg-bubble">${linkify(text)}${imgTag}</div>`;
     c.appendChild(m);
     c.scrollTop = c.scrollHeight;
   }
@@ -304,23 +304,23 @@
     document.querySelector('.send-btn').disabled = true;
     showTyping();
     const timeout = setTimeout(() => {
-  const t = document.getElementById('typing');
-  if (t && !t.querySelector('.slow-note')) {
-    const note = document.createElement('div');
-    note.className = 'slow-note';
-    note.textContent = 'Still thinking...';
-    t.querySelector('.msg-bubble').appendChild(note);
-  }
-}, 10000);
+      const t = document.getElementById('typing');
+      if (t && !t.querySelector('.slow-note')) {
+        const note = document.createElement('div');
+        note.className = 'slow-note';
+        note.textContent = 'Still thinking...';
+        t.querySelector('.msg-bubble').appendChild(note);
+      }
+    }, 10000);
 
-fetch('https://web-production-b77ce.up.railway.app/chat', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json', 'x-api-key': '4f1813e8c84e073b9513e651439ecc90534a340cfa22c880d9caa8402cc176d8' },
-  body: JSON.stringify({ message: text, session_id: sessionId })
-})
-.then(r => r.json())
-.then(data => { clearTimeout(timeout); removeTyping(); addBotMessage(data.reply, data.image_url); document.querySelector('.send-btn').disabled = false; })
-.catch(() => { clearTimeout(timeout); removeTyping(); addBotMessage("Sorry, I'm having trouble connecting right now. Please try again."); document.querySelector('.send-btn').disabled = false; });
+    fetch('https://api.arvioflo.com/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': '4f1813e8c84e073b9513e651439ecc90534a340cfa22c880d9caa8402cc176d8' },
+      body: JSON.stringify({ message: text, session_id: sessionId })
+    })
+    .then(r => r.json())
+    .then(data => { clearTimeout(timeout); removeTyping(); addBotMessage(data.reply, data.image_url); document.querySelector('.send-btn').disabled = false; })
+    .catch(() => { clearTimeout(timeout); removeTyping(); addBotMessage("Sorry, I'm having trouble connecting right now. Please try again."); document.querySelector('.send-btn').disabled = false; });
   }
 
   const chatInput = document.getElementById('chat-input');
@@ -329,17 +329,17 @@ fetch('https://web-production-b77ce.up.railway.app/chat', {
   chatInput.addEventListener('input', () => { chatInput.style.height = 'auto'; chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px'; });
 
   function linkify(text) {
-  text = text.replace(/Image:\s*/gi, '');
-  const urlPattern = /(https?:\/\/[^\s]+)/g;
-  return text.replace(urlPattern, function(url) {
-    if (url.match(/\.(png|jpg|jpeg|gif|webp)$/i)) {
-      return '<img src="' + url + '" style="max-width:100%;border-radius:8px;margin-top:8px;display:block;" />';
-    }
-    return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color:#e87a7a;text-decoration:underline;">' + url + '</a>';
-  });
-}
+    text = text.replace(/Image:\s*/gi, '');
+    const urlPattern = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlPattern, function(url) {
+      if (url.match(/\.(png|jpg|jpeg|gif|webp)$/i)) {
+        return '<img src="' + url + '" style="max-width:100%;border-radius:8px;margin-top:8px;display:block;" />';
+      }
+      return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color:#e87a7a;text-decoration:underline;">' + url + '</a>';
+    });
+  }
 
-function escapeHTML(str) {
+  function escapeHTML(str) {
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
