@@ -247,7 +247,6 @@
     document.getElementById('chat-page').classList.add('active');
     document.body.style.overflow = 'hidden';
     if (!chatReady) initChat();
-    document.getElementById('chat-input').focus();
   }
 
   function showLanding() {
@@ -326,6 +325,7 @@ fetch('https://web-production-b77ce.up.railway.app/chat', {
 
   const chatInput = document.getElementById('chat-input');
   chatInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+  document.addEventListener('keydown', e => { if (!e.ctrlKey && !e.metaKey && !e.altKey && e.key.length === 1 && document.activeElement !== chatInput) { chatInput.focus(); } });
   chatInput.addEventListener('input', () => { chatInput.style.height = 'auto'; chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px'; });
 
   function linkify(text) {
