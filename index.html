@@ -237,6 +237,7 @@
 
 <script>
   let chatReady = false;
+  const sessionId = crypto.randomUUID();
 
   function showChat() {
     document.getElementById('landing-page').classList.remove('active');
@@ -296,14 +297,16 @@
     chatInput.value = '';
     chatInput.style.height = 'auto';
     addUserMessage(text);
+    document.querySelector('.send-btn').disabled = true;
     showTyping();
     fetch('https://api.arvioflo.com/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': '4f1813e8c84e073b9513e651439ecc90534a340cfa22c880d9caa8402cc176d8' },
-      body: JSON.stringify({ message: text })
+      headers: { 'Content-Type': 'application/json', 'x-api-key': 'a7c9e2f4b1d835609c4a12de7f08b3c6e519ad42f0c87b6e3d25a1f94c067e82' },
+      body: JSON.stringify({ message: text, session_id: sessionId })
     })
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(data => { removeTyping(); addBotMessage(data.reply); });
+    .then(data => { removeTyping(); addBotMessage(data.reply); document.querySelector('.send-btn').disabled = false; })
+    .catch(() => { removeTyping(); addBotMessage("Sorry, I'm having trouble connecting right now. Please try again."); document.querySelector('.send-btn').disabled = false; });
   }
 
   const chatInput = document.getElementById('chat-input');
