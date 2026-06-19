@@ -302,7 +302,7 @@
       headers: { 'Content-Type': 'application/json', 'x-api-key': '4f1813e8c84e073b9513e651439ecc90534a340cfa22c880d9caa8402cc176d8' },
       body: JSON.stringify({ message: text })
     })
-    .then(r => r.json())
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(data => { removeTyping(); addBotMessage(data.reply); });
   }
 
