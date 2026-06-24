@@ -26,7 +26,7 @@
     :host { all: initial; font-family: 'DM Sans', sans-serif; }
 
     .arvio-trigger {
-      position: fixed; bottom: 24px; right: 24px; z-index: 2147483647;
+      position: fixed; bottom: 100px; right: 24px; z-index: 2147483647;
       width: 60px; height: 60px; border-radius: 50%; border: none;
       background: linear-gradient(135deg, #1a2b5e 0%, #2a6e9e 100%);
       color: #fff; cursor: pointer;
@@ -40,7 +40,7 @@
     .arvio-trigger.hidden { display: none !important; }
 
     .arvio-window {
-      position: fixed; bottom: 96px; right: 24px; z-index: 2147483646;
+      position: fixed; bottom: 172px; right: 24px; z-index: 2147483646;
       width: 380px; height: 520px;
       background: #ffffff; border: 1px solid rgba(26,43,94,0.10);
       border-radius: 14px; overflow: hidden;
@@ -160,11 +160,11 @@
     .arvio-footer a { color: #2a8cb5; text-decoration: none; }
 
     @media (max-width: 500px) {
-      .arvio-trigger { bottom: 16px; right: 16px; width: 54px; height: 54px; }
+      .arvio-trigger { bottom: 90px; right: 16px; width: 54px; height: 54px; }
       .arvio-trigger svg { width: 24px; height: 24px; }
       .arvio-window {
         width: calc(100vw - 24px); height: 70vh;
-        bottom: 80px; right: 12px; border-radius: 14px;
+        bottom: 156px; right: 12px; border-radius: 14px;
       }
       .arvio-window.maximized {
         width: 100vw; height: 100vh;
