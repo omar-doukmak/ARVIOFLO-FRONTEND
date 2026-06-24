@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oubari Widget Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    /* Page background just for preview — this simulates the Oubari website */
+    body{margin:0;padding:0;background:#f5f7fa;font-family:'DM Sans',sans-serif;min-height:100vh}
+    .preview-notice{text-align:center;padding:60px 20px;color:#1a2b5e;font-size:14px;opacity:0.4}
+
+    /* ====== WIDGET STYLES START ====== */
+    :root{
+      --w-navy:#1a2b5e;--w-navy-light:#2a4a8e;--w-teal:#2a8cb5;
+      --w-bg:#f5f7fa;--w-surface:#ffffff;--w-border:rgba(26,43,94,0.10);
+      --w-text:#1a2b5e;--w-text-dim:rgba(26,43,94,0.55);--w-text-dimmer:rgba(26,43,94,0.30);
+      --w-gradient:linear-gradient(135deg, #1a2b5e 0%, #2a6e9e 100%);
+      --w-radius:14px;
+    }
+
+    /* Floating trigger button */
+    .widget-trigger{
+      position:fixed;bottom:24px;right:24px;z-index:9999;
+      width:60px;height:60px;border-radius:50%;border:none;
+      background:var(--w-gradient);color:#fff;cursor:pointer;
+      box-shadow:0 4px 20px rgba(26,43,94,0.30);
+      display:flex;align-items:center;justify-content:center;
+      transition:transform .2s,box-shadow .2s;
+    }
+    .widget-trigger:hover{transform:scale(1.06);box-shadow:0 6px 28px rgba(26,43,94,0.38)}
+    .widget-trigger svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.8}
+    .widget-trigger.hidden{display:none}
+
+    /* Chat window */
+    .widget-window{
+      position:fixed;bottom:96px;right:24px;z-index:9998;
+      width:380px;height:520px;
+      background:var(--w-surface);border:1px solid var(--w-border);
+      border-radius:var(--w-radius);overflow:hidden;
+      display:none;flex-direction:column;
+      box-shadow:0 8px 40px rgba(26,43,94,0.15);
+      transition:all .25s ease;
+    }
+    .widget-window.open{display:flex}
+    .widget-window.maximized{
+      width:100vw;height:100vh;bottom:0;right:0;
+      border-radius:0;
+    }
+    .widget-window.maximized .w-messages{padding:28px 24px;gap:16px}
+    .widget-window.maximized .w-bubble{font-size:16px;padding:14px 18px}
+    .widget-window.maximized .w-input-area{padding:16px 24px}
+    .widget-window.maximized .w-input{font-size:16px}
+    .widget-window.maximized .w-input-row{padding:14px 16px;border-radius:16px;align-items:center}
+    .widget-window.maximized .w-send{width:36px;height:36px}
+    .widget-window.maximized .w-header{padding:18px 24px}
+    .widget-window.maximized .w-header-name{font-size:17px}
+    .widget-window.maximized .w-header-role{font-size:13px}
+    .widget-window.maximized .w-footer{padding:10px;font-size:12px}
+    .widget-window.maximized .w-msg{max-width:680px}
+
+    /* Header */
+    .w-header{
+      padding:14px 16px;display:flex;align-items:center;gap:10px;
+      background:var(--w-gradient);color:#fff;flex-shrink:0;
+    }
+    .w-header-icon{
+      width:32px;height:32px;background:rgba(255,255,255,0.15);
+      border-radius:8px;display:flex;align-items:center;justify-content:center;
+      font-weight:700;font-size:14px;
+    }
+    .w-header-info{flex:1}
+    .w-header-name{font-size:15px;font-weight:600}
+    .w-header-role{font-size:12px;opacity:0.75}
+    .w-header-actions{display:flex;gap:4px}
+    .w-header-btn{
+      width:28px;height:28px;border:none;background:rgba(255,255,255,0.12);
+      border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:background .15s;
+    }
+    .w-header-btn:hover{background:rgba(255,255,255,0.25)}
+    .w-header-btn svg{width:14px;height:14px;stroke:#fff;stroke-width:2;fill:none}
+
+    /* Messages */
+    .w-messages{
+      flex:1;overflow-y:auto;padding:16px;
+      display:flex;flex-direction:column;gap:12px;
+      background:var(--w-bg);scroll-behavior:smooth;
+    }
+    .w-messages::-webkit-scrollbar{width:3px}
+    .w-messages::-webkit-scrollbar-track{background:transparent}
+    .w-messages::-webkit-scrollbar-thumb{background:rgba(26,43,94,0.15);border-radius:3px}
+    .w-msg{max-width:85%;width:fit-content;animation:wFadeUp .25s ease both}
+    .w-msg.user{align-self:flex-end}
+    @keyframes wFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .w-bubble{padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.55;unicode-bidi:plaintext;text-align:start}
+    .w-msg.bot .w-bubble{background:var(--w-surface);color:var(--w-text);border:1px solid var(--w-border);border-bottom-left-radius:4px}
+    .w-msg.user .w-bubble{background:var(--w-gradient);color:#fff;border-bottom-right-radius:4px}
+
+    /* Typing */
+    @keyframes wDotFade{0%,100%{opacity:0.2}50%{opacity:1}}
+    .w-dots{display:flex;gap:5px;padding:3px 2px}
+    .w-dot{width:6px;height:6px;background:var(--w-navy);border-radius:50%;animation:wDotFade 1.4s ease-in-out infinite}
+    .w-dot:nth-child(2){animation-delay:0.2s}
+    .w-dot:nth-child(3){animation-delay:0.4s}
+    .w-slow{font-size:11px;color:var(--w-text-dimmer);font-style:italic;margin-top:5px}
+
+    /* Input */
+    .w-input-area{padding:12px;border-top:1px solid var(--w-border);background:var(--w-surface);flex-shrink:0}
+    .w-input-row{display:flex;gap:8px;align-items:center;background:var(--w-bg);border:1px solid var(--w-border);border-radius:12px;padding:10px 12px;transition:border-color .2s}
+    .w-input-row:hover{border-color:rgba(26,43,94,0.30)}
+    .w-input-row:focus-within{border-color:var(--w-navy)}
+    .w-input{flex:1;background:transparent;border:none;outline:none;color:var(--w-text);font-family:'DM Sans',sans-serif;font-size:14px;resize:none;max-height:80px;line-height:1.5;margin:0;padding:0}
+    .w-input::placeholder{color:var(--w-text-dimmer)}
+    .w-send{
+      width:32px;height:32px;background:var(--w-gradient);border:none;
+      border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:opacity .18s;flex-shrink:0;
+    }
+    .w-send:hover{opacity:0.8}
+    .w-send:disabled{opacity:0.3;cursor:default}
+    .w-send svg{width:13px;height:13px;stroke:#fff;stroke-width:2.5;fill:none}
+
+    /* Powered by */
+    .w-footer{text-align:center;padding:6px;font-size:11px;color:rgba(26,43,94,0.50);background:var(--w-surface);border-top:1px solid var(--w-border)}
+    .w-footer a{color:var(--w-teal);text-decoration:none}
+
+    /* Mobile */
+    @media(max-width:500px){
+      .widget-trigger{bottom:16px;right:16px;width:54px;height:54px}
+      .widget-trigger svg{width:24px;height:24px}
+      .widget-window{
+        width:calc(100vw - 24px);height:70vh;
+        bottom:80px;right:12px;
+        border-radius:var(--w-radius);
+      }
+      .widget-window.maximized{
+        width:100vw;height:100vh;
+        bottom:0;right:0;
+        border-radius:0;
+        padding-top:env(safe-area-inset-top, 0px);
+      }
+    }
+    /* ====== WIDGET STYLES END ====== */
+  </style>
+</head>
+<body>
+
+<p class="preview-notice">This page simulates the Oubari website. The chat widget is in the bottom-right corner.</p>
+
+<!-- Widget trigger button -->
+<button class="widget-trigger" id="widgetTrigger" onclick="toggleWidget()">
+  <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+  </svg>
+</button>
+
+<!-- Chat window -->
+<div class="widget-window" id="widgetWindow">
+  <div class="w-header">
+    <div class="w-header-info">
+      <div class="w-header-name">Arvio</div>
+      <div class="w-header-role">AI Assistant</div>
+    </div>
+    <div class="w-header-actions">
+      <button class="w-header-btn" onclick="maximizeWidget()" title="Maximize" id="maxBtn">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+      </button>
+      <button class="w-header-btn" onclick="closeWidget()" title="Close">
+        <svg viewBox="0 0 24 24" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="w-messages" id="wMessages"></div>
+  <div class="w-input-area">
+    <div class="w-input-row">
+      <textarea class="w-input" id="wInput" placeholder="Ask us anything..." rows="1"></textarea>
+      <button class="w-send" id="wSend" onclick="wSendMessage()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="w-footer">Powered by <a href="https://arvioflo.com" target="_blank">Arvioflo</a></div>
+</div>
+
+<script>
+  const wSessionId = crypto.randomUUID();
+  let wInitialized = false;
+  let wMaximized = false;
+
+  function toggleWidget() {
+    const win = document.getElementById('widgetWindow');
+    const trigger = document.getElementById('widgetTrigger');
+    win.classList.toggle('open');
+    trigger.classList.toggle('hidden');
+    if (!wInitialized) {
+      wInitialized = true;
+      setTimeout(() => wAddBot("Hello! How can we help you today?"), 400);
+    }
+  }
+
+  function minimizeWidget() {
+    document.getElementById('widgetWindow').classList.remove('open');
+    document.getElementById('widgetTrigger').classList.remove('hidden');
+  }
+
+  function maximizeWidget() {
+    const win = document.getElementById('widgetWindow');
+    wMaximized = !wMaximized;
+    win.classList.toggle('maximized', wMaximized);
+  }
+
+  function closeWidget() {
+    document.getElementById('widgetWindow').classList.remove('open', 'maximized');
+    document.getElementById('widgetTrigger').classList.remove('hidden');
+    wMaximized = false;
+  }
+
+  function wAddBot(text, imageUrl) {
+    const c = document.getElementById('wMessages');
+    const m = document.createElement('div');
+    m.className = 'w-msg bot';
+    const img = imageUrl ? `<img src="${imageUrl}" style="max-width:100%;border-radius:6px;margin-top:6px;" />` : '';
+    m.innerHTML = `<div class="w-bubble">${wLinkify(text)}${img}</div>`;
+    c.appendChild(m);
+    c.scrollTop = c.scrollHeight;
+  }
+
+  function wAddUser(text) {
+    const c = document.getElementById('wMessages');
+    const m = document.createElement('div');
+    m.className = 'w-msg user';
+    m.innerHTML = `<div class="w-bubble">${wEscape(text)}</div>`;
+    c.appendChild(m);
+    c.scrollTop = c.scrollHeight;
+  }
+
+  function wShowTyping() {
+    const c = document.getElementById('wMessages');
+    const t = document.createElement('div');
+    t.id = 'wTyping';
+    t.className = 'w-msg bot';
+    t.innerHTML = `<div class="w-bubble"><div class="w-dots"><div class="w-dot"></div><div class="w-dot"></div><div class="w-dot"></div></div></div>`;
+    c.appendChild(t);
+    c.scrollTop = c.scrollHeight;
+  }
+
+  function wRemoveTyping() {
+    const t = document.getElementById('wTyping');
+    if (t) t.remove();
+  }
+
+  function wSendMessage() {
+    const input = document.getElementById('wInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    input.style.height = 'auto';
+    wAddUser(text);
+    document.getElementById('wSend').disabled = true;
+    wShowTyping();
+
+    const timeout = setTimeout(() => {
+      const t = document.getElementById('wTyping');
+      if (t && !t.querySelector('.w-slow')) {
+        const note = document.createElement('div');
+        note.className = 'w-slow';
+        note.textContent = 'Still thinking...';
+        t.querySelector('.w-bubble').appendChild(note);
+      }
+    }, 10000);
+
+    fetch('https://api.arvioflo.com/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': 'b3f82d6a9c1e47052fa8d9b0e6c734a15f28cd93a0b17e4d862f5c09a3e81d47' },
+      body: JSON.stringify({ message: text, session_id: wSessionId })
+    })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(data => { clearTimeout(timeout); wRemoveTyping(); wAddBot(data.reply, data.image_url); document.getElementById('wSend').disabled = false; })
+    .catch(() => { clearTimeout(timeout); wRemoveTyping(); wAddBot("Sorry, I'm having trouble connecting. Please try again."); document.getElementById('wSend').disabled = false; });
+  }
+
+  const wInput = document.getElementById('wInput');
+  wInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); wSendMessage(); } });
+  wInput.addEventListener('input', () => { wInput.style.height = 'auto'; wInput.style.height = Math.min(wInput.scrollHeight, 80) + 'px'; });
+
+  document.addEventListener('click', e => {
+    const win = document.getElementById('widgetWindow');
+    const trigger = document.getElementById('widgetTrigger');
+    if (win.classList.contains('open') && !win.contains(e.target) && !trigger.contains(e.target)) {
+      closeWidget();
+    }
+  });
+
+  function wLinkify(text) {
+    text = text.replace(/Image:\s*/gi, '');
+    const urlPattern = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlPattern, function(url) {
+      if (url.match(/\.(png|jpg|jpeg|gif|webp)$/i)) {
+        return '<img src="' + url + '" style="max-width:100%;border-radius:6px;margin-top:6px;display:block;" />';
+      }
+      return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color:#2a8cb5;text-decoration:underline;">' + url + '</a>';
+    });
+  }
+
+  function wEscape(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>
